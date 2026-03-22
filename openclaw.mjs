@@ -125,7 +125,7 @@ const buildMissingEntryErrorMessage = async () => {
   lines.push("For releases, use `npm install -g openclaw@latest`.");
   return lines.join("\n");
 };
-
+// fuck 运行 dev entry 文件
 if (await tryImport("./dist/entry.js")) {
   // OK
 } else if (await tryImport("./dist/entry.mjs")) {

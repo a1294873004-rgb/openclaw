@@ -211,6 +211,7 @@ const hasSourceMtimeChanged = (stampMtime, deps) => {
 };
 
 const shouldBuild = (deps) => {
+  return true;
   if (deps.env.OPENCLAW_FORCE_BUILD === "1") {
     return true;
   }
@@ -324,6 +325,8 @@ export async function runNodeMain(params = {}) {
   }));
   deps.configFiles = runNodeConfigFiles.map((filePath) => path.join(deps.cwd, filePath));
 
+  //fuck test force build
+  deps.env.OPENCLAW_FORCE_BUILD = 1;
   if (!shouldBuild(deps)) {
     if (!syncRuntimeArtifacts(deps)) {
       return 1;
@@ -353,7 +356,7 @@ export async function runNodeMain(params = {}) {
     return 1;
   }
   writeBuildStamp(deps);
-  return await runOpenClaw(deps);
+  // return await runOpenClaw(deps);
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {

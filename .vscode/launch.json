@@ -5,7 +5,60 @@
       "type": "node",
       "request": "launch",
       "name": "Debug dev",
-      "program": "${workspaceFolder}/scripts/run-node.mjs"
+      "program": "${workspaceFolder}/scripts/run-node.mjs",
+      "args": [
+        "agent"
+      ],
+      "autoAttachChildProcesses": true,
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug tsdown.config.ts",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--import",
+        "tsx"
+      ],
+      "args": [
+        "${workspaceFolder}/tsdown.config.ts"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "env": {
+        "NODE_ENV": "development",
+        "OPENCLAW_BUILD_VERBOSE": "1"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug entry.ts",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--import",
+        "tsx"
+      ],
+      "args": [
+        "${workspaceFolder}/src/entry.ts",
+        "--dev",
+        "gateway",
+        "--verbose"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "env": {
+        "NODE_ENV": "development",
+        "OPENCLAW_BUILD_VERBOSE": "1"
+      }
     }
   ]
 }
