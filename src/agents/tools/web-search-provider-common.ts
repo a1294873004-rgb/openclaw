@@ -92,6 +92,45 @@ export async function withTrustedWebSearchEndpoint<T>(
   );
 }
 
+export async function postTrustedWebToolsJson<T>(
+  params: {
+    url: string;
+    timeoutSeconds: number;
+    apiKey: string;
+    body: Record<string, unknown>;
+    errorLabel: string;
+    maxErrorBytes?: number;
+  },
+  parseResponse: (response: Response) => Promise<T>,
+): Promise<T> {
+  return withTrustedWebToolsEndpoint(
+    {
+      url: params.url,
+      timeoutSeconds: params.timeoutSeconds,
+      init: {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${params.apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params.body),
+      },
+    },
+    async ({ response }) => {
+      if (!response.ok) {
+        const detail = await readResponseText(response, {
+          maxBytes: params.maxErrorBytes ?? 64_000,
+        });
+        throw new Error(
+          `${params.errorLabel} API error (${response.status}): ${detail.text || response.statusText}`,
+        );
+      }
+      return await parseResponse(response);
+    },
+  );
+}
+
 export async function throwWebSearchApiError(res: Response, providerLabel: string): Promise<never> {
   const detailResult = await readResponseText(res, { maxBytes: 64_000 });
   const detail = detailResult.text;
@@ -165,6 +204,50 @@ export function normalizeToIsoDate(value: string): string | undefined {
     return isValidIsoDate(iso) ? iso : undefined;
   }
   return undefined;
+}
+
+export function parseIsoDateRange(params: {
+  rawDateAfter?: string;
+  rawDateBefore?: string;
+  invalidDateAfterMessage: string;
+  invalidDateBeforeMessage: string;
+  invalidDateRangeMessage: string;
+  docs?: string;
+}):
+  | { dateAfter?: string; dateBefore?: string }
+  | {
+      error: "invalid_date" | "invalid_date_range";
+      message: string;
+      docs: string;
+    } {
+  const docs = params.docs ?? "https://docs.openclaw.ai/tools/web";
+  const dateAfter = params.rawDateAfter ? normalizeToIsoDate(params.rawDateAfter) : undefined;
+  if (params.rawDateAfter && !dateAfter) {
+    return {
+      error: "invalid_date",
+      message: params.invalidDateAfterMessage,
+      docs,
+    };
+  }
+
+  const dateBefore = params.rawDateBefore ? normalizeToIsoDate(params.rawDateBefore) : undefined;
+  if (params.rawDateBefore && !dateBefore) {
+    return {
+      error: "invalid_date",
+      message: params.invalidDateBeforeMessage,
+      docs,
+    };
+  }
+
+  if (dateAfter && dateBefore && dateAfter > dateBefore) {
+    return {
+      error: "invalid_date_range",
+      message: params.invalidDateRangeMessage,
+      docs,
+    };
+  }
+
+  return { dateAfter, dateBefore };
 }
 
 export function normalizeFreshness(
