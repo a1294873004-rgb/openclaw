@@ -465,6 +465,7 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
       lockPort: port,
       start: async () =>
         await startGatewayServer(port, {
+          // fuck gateway 服务启动逻辑
           bind,
           auth: authOverride,
           tailscale: tailscaleOverride,

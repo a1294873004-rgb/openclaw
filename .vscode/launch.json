@@ -47,7 +47,7 @@
         "${workspaceFolder}/src/entry.ts",
         "--dev",
         "gateway",
-        "--verbose"
+        "start",
       ],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
