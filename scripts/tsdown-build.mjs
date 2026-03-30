@@ -3,6 +3,7 @@
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { BUNDLED_PLUGIN_PATH_PREFIX } from "./lib/bundled-plugin-paths.mjs";
 
 const logLevel = process.env.OPENCLAW_BUILD_VERBOSE ? "info" : "warn";
 // ['--no-clean']
@@ -50,7 +51,10 @@ function findFatalUnresolvedImport(lines) {
     }
 
     const normalizedLine = line.replace(ANSI_ESCAPE_RE, "");
-    if (!normalizedLine.includes("extensions/") && !normalizedLine.includes("node_modules/")) {
+    if (
+      !normalizedLine.includes(BUNDLED_PLUGIN_PATH_PREFIX) &&
+      !normalizedLine.includes("node_modules/")
+    ) {
       return normalizedLine;
     }
   }
