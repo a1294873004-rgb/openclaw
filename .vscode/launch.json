@@ -59,6 +59,31 @@
         "NODE_ENV": "development",
         "OPENCLAW_BUILD_VERBOSE": "1"
       }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "onboard entry.ts",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--import",
+        "tsx"
+      ],
+      "args": [
+        "${workspaceFolder}/src/entry.ts",
+        "--dev",
+        "onboard",
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "env": {
+        "NODE_ENV": "development",
+        "OPENCLAW_BUILD_VERBOSE": "1"
+      }
     }
   ]
 }
